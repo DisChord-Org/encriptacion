@@ -43,11 +43,21 @@ export function sonIguales(textoA: string | Buffer, textoB: string | Buffer): bo
     return timingSafeEqual(bufA, bufB);
 }
 
+function normalizarClave(clave: string | Buffer): Buffer<ArrayBufferLike>
+{
+    if (typeof clave === 'string')
+    {
+        return clave.length === 64
+            ? Buffer.from(clave, 'hex')
+            : Buffer.from(clave.padEnd(32, '0').slice(0, 32));
+    }
+
+    return clave;
+}
+
 export function cifrar(texto: string, clave: string | Buffer, algoritmo: CipherGCMTypes = 'aes-256-gcm'): ResultadoCifrado
 {
-    const claveBuffer: Buffer<ArrayBufferLike> = typeof clave === 'string'
-        ? (clave.length === 64 ? Buffer.from(clave, 'hex') : Buffer.from(clave.padEnd(32, '0').slice(0, 32)))
-        : clave;
+    const claveBuffer: Buffer<ArrayBufferLike> = normalizarClave(clave);
 
     const iv: Buffer = randomBytes(12);
     const cipher: CipherGCM = createCipheriv(algoritmo, claveBuffer, iv);
@@ -62,9 +72,10 @@ export function cifrar(texto: string, clave: string | Buffer, algoritmo: CipherG
     };
 }
 
-export function descifrar(textoCifradoHex: string, clave: Buffer, ivHex: string, tagHex: string, algoritmo: CipherGCMTypes = 'aes-256-gcm'): string
+export function descifrar(textoCifradoHex: string, clave: string | Buffer, ivHex: string, tagHex: string, algoritmo: CipherGCMTypes = 'aes-256-gcm'): string
 {
-    const decipher: DecipherGCM = createDecipheriv(algoritmo, clave, Buffer.from(ivHex, 'hex'));
+    const claveBuffer: Buffer<ArrayBufferLike> = normalizarClave(clave);
+    const decipher: DecipherGCM = createDecipheriv(algoritmo, claveBuffer, Buffer.from(ivHex, 'hex'));
     decipher.setAuthTag(Buffer.from(tagHex, 'hex'));
 
     const descifrado: Buffer<ArrayBuffer> = Buffer.concat([
