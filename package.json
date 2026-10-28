@@ -1,0 +1,27 @@
+{
+    "name": "encriptacion",
+    "version": "1.0.0",
+    "description": "Dischord programming language library",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "dev": "tsc --watch",
+        "typecheck": "tsc --noEmit",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "tsx": "^4.21.0",
+        "typescript": "^5.9.3"
+    },
+    "devDependencies": {
+        "@types/node": "^25.2.3"
+    },
+    "packageManager": "pnpm@10.34.5"
+}
